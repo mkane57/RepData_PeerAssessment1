@@ -10,56 +10,118 @@ output:
 
 ## Loading and preprocessing the data
 
-```{r Loading}
+
+```r
 unzip("activity.zip")
 activity <- read.csv("activity.csv")
 activity$date <- as.POSIXct(activity$date)
 library("ggplot2")
-library("lattice")
+```
 
+```
+## Warning: package 'ggplot2' was built under R version 3.4.4
+```
+
+```r
+library("lattice")
 ```
 
 ## What is mean total number of steps taken per day?
 
-```{r TotalStepsPerDay}
 
+```r
 # calculate the total steps per day
 totalStepsPerDay <- aggregate(steps ~ date, activity, sum)
 # plot a histogram of all the steps per day
 hist(totalStepsPerDay$steps, xlab="Steps per Day")
+```
 
+![](PA1_template_files/figure-html/TotalStepsPerDay-1.png)<!-- -->
+
+```r
 # output the mean and median steps per day
 print("Mean")
-mean(totalStepsPerDay$steps)
-print("Median")
-median(totalStepsPerDay$steps)
+```
 
+```
+## [1] "Mean"
+```
+
+```r
+mean(totalStepsPerDay$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+print("Median")
+```
+
+```
+## [1] "Median"
+```
+
+```r
+median(totalStepsPerDay$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
-```{r DailyActivityPattern}
 
+```r
 # create a time series plot of average steps per each 5 minute interval
 avgStepsPerInterval <- aggregate(steps ~ interval, activity, mean)
 plot(avgStepsPerInterval$interval, avgStepsPerInterval$steps, type="l", xlab="Number of Steps", ylab="Interval")
+```
 
+![](PA1_template_files/figure-html/DailyActivityPattern-1.png)<!-- -->
+
+```r
 # find the time interval with the average maximum steps
 maxIndex <- match(max(avgStepsPerInterval$steps), avgStepsPerInterval$steps)
 print("5 Min Interval with Max Average Steps")
-avgStepsPerInterval$interval[maxIndex]
+```
 
+```
+## [1] "5 Min Interval with Max Average Steps"
+```
+
+```r
+avgStepsPerInterval$interval[maxIndex]
+```
+
+```
+## [1] 835
 ```
 
 
 ## Imputing missing values
 
-```{r ImputingMissingValues}
 
+```r
 # count the number of NAs in the data
 print("Number of NAs in Data")
-sum(is.na(activity$steps))
+```
 
+```
+## [1] "Number of NAs in Data"
+```
+
+```r
+sum(is.na(activity$steps))
+```
+
+```
+## [1] 2304
+```
+
+```r
 # we will fill in the missing values with the average number of steps from that time interval
 
 # create a new dataset
@@ -76,20 +138,48 @@ activity2$steps[is.na(activity2$steps)] <- avgStepsForNAs$steps.y
 totalStepsPerDay2 <- aggregate(steps ~ date, activity2, sum)
 # plot a histogram of all the steps per day
 hist(totalStepsPerDay2$steps, xlab="Steps per Day")
+```
 
+![](PA1_template_files/figure-html/ImputingMissingValues-1.png)<!-- -->
+
+```r
 # output the mean and median steps per day
 print("New Mean")
-mean(totalStepsPerDay2$steps)
-print("New Median")
-median(totalStepsPerDay2$steps)
+```
 
+```
+## [1] "New Mean"
+```
+
+```r
+mean(totalStepsPerDay2$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
+print("New Median")
+```
+
+```
+## [1] "New Median"
+```
+
+```r
+median(totalStepsPerDay2$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r WeekdayWeekendAnalysis}
 
+```r
 # create dayType factor
 dayType <- factor(c("weekday", "weekend"))
 # define the weekend days so we can split them up in a factor
@@ -110,5 +200,6 @@ avgStepsPerInvervalWithDayType <- rbind(avgStepsPerIntervalWeekday, avgStepsPerI
 
 # plot the average number of steps
 xyplot(steps~interval|factor(dayType), data=avgStepsPerInvervalWithDayType, type='l',layout=c(1,2), xlab='Interval',ylab='Number of Steps')
-
 ```
+
+![](PA1_template_files/figure-html/WeekdayWeekendAnalysis-1.png)<!-- -->
